@@ -5,12 +5,14 @@ on:
     branches: [main, develop]
     paths:
       - "src-tauri/**"
+      - "src/**"
       - "scripts/ci/launch-smoke.*"
       - ".github/workflows/rust-tests.yml"
   pull_request:
     branches: [main, develop]
     paths:
       - "src-tauri/**"
+      - "src/**"
       - "scripts/ci/launch-smoke.*"
       - ".github/workflows/rust-tests.yml"
 
