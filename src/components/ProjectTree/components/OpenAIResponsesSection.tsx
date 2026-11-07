@@ -29,7 +29,7 @@ function textField(value: unknown, key: string): string | undefined {
 }
 
 export function OpenAIResponsesSection() {
-  const { t } = useTranslation("session");
+  const { t } = useTranslation();
   const serverAllowsOpenAIResponses = useAppStore((state) => state.isOpenAIResponsesAvailable);
   const localRequestOnly = isTauri() || (
     typeof window !== "undefined" &&
