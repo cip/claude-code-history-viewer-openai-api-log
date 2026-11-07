@@ -107,8 +107,10 @@ export async function api<T>(
     } catch {
       message = "Request failed";
     }
-    // Log full error for debugging, show sanitized message to user
-    console.error(`API error [${command}]:`, errorBody);
+    // Never log this key-bearing OpenAI request flow.
+    if (command !== "load_openai_response") {
+      console.error(`API error [${command}]:`, errorBody);
+    }
     throw new Error(message);
   }
 

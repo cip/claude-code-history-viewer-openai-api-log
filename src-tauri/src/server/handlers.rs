@@ -282,6 +282,13 @@ pub struct GitLogParams {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub struct OpenAIResponseParams {
+    pub response_id: String,
+    pub api_key: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ClaudePathParam {
     pub claude_path: String,
 }
@@ -685,6 +692,14 @@ pub async fn get_server_config(
 handler_no_params!(get_mcp_servers, commands::claude_settings::get_mcp_servers);
 
 // ─── Handlers: SIMPLE PARAMS ──────────────────────────────────────────────────
+
+handler_json!(
+    load_openai_response,
+    OpenAIResponseParams,
+    |p: OpenAIResponseParams| async move {
+        commands::openai_response::load_openai_response(p.response_id, p.api_key).await
+    }
+);
 
 handler_json!(
     validate_claude_folder,

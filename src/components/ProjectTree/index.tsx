@@ -22,6 +22,7 @@ import { useProjectTreeState } from "./hooks/useProjectTreeState";
 import { GroupedProjectList } from "./components/GroupedProjectList";
 import { LibrarySection } from "./components/LibrarySection";
 import { ProjectListMenu, type ProjectSort } from "./components/ProjectListMenu";
+import { OpenAIResponsesSection } from "./components/OpenAIResponsesSection";
 import type { ProjectTreeProps, SessionSelectHandler } from "./types";
 import type { ProviderId, ClaudeProject } from "../../types";
 import { useAppStore } from "../../store/useAppStore";
@@ -840,6 +841,8 @@ export const ProjectTree: React.FC<ProjectTreeProps> = ({
                 isDiscovering={isDetectingProviders || isLoadingProjects}
               />
             </div>
+
+            <OpenAIResponsesSection />
 
             {initialProjectsPending ? (
               <LoadingRows label={t("common.loadingProjects")} compact />
