@@ -90,7 +90,6 @@ export function getOpenAIResponseErrorKey(error: unknown): OpenAIResponseErrorKe
   const message = error instanceof Error ? error.message : String(error ?? "");
   return OPENAI_RESPONSE_ERROR_KEYS[message] ?? "openaiResponses.error";
 }
-
 function isLoopbackHost(hostname: string): boolean {
   const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (normalized === "localhost" || normalized === "::1") return true;
@@ -100,13 +99,9 @@ function isLoopbackHost(hostname: string): boolean {
     octets.every((octet) => /^\d{1,3}$/.test(octet) && Number(octet) <= 255);
 }
 
-/** WebUI may send an API key only to an authenticated loopback server. */
-export function canOpenOpenAIResponsesInWebUI(
-  pageHostname: string,
-  apiBase: string,
-  hasAuth: boolean,
-): boolean {
-  if (!hasAuth || !isLoopbackHost(pageHostname)) return false;
+/** The browser may send an API key only when both the page and API target are local. */
+export function canOpenOpenAIResponsesInWebUI(pageHostname: string, apiBase: string): boolean {
+  if (!isLoopbackHost(pageHostname)) return false;
   try {
     const apiUrl = new URL(apiBase, "http://" + pageHostname);
     return isLoopbackHost(apiUrl.hostname);

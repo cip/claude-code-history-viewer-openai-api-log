@@ -684,6 +684,7 @@ pub async fn get_server_config(
 ) -> Result<Json<Value>, ApiError> {
     Ok(Json(serde_json::json!({
         "readOnly": state.read_only,
+        "openaiResponsesAvailable": super::openai_response_route_enabled(&state),
     })))
 }
 

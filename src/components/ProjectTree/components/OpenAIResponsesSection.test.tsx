@@ -8,10 +8,12 @@ vi.mock("react-i18next", () => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }));
 vi.mock("@/utils/platform", () => ({
-  isTauri: () => true,
+  isTauri: () => false,
   getApiBase: () => "http://localhost:3727",
-  getAuthToken: () => null,
-  getCsrfToken: () => null,
+}));
+vi.mock("@/store/useAppStore", () => ({
+  useAppStore: (selector: (state: { isOpenAIResponsesAvailable: boolean }) => unknown) =>
+    selector({ isOpenAIResponsesAvailable: true }),
 }));
 vi.mock("@/services/api", () => ({ api: vi.fn() }));
 
@@ -59,6 +61,7 @@ describe("OpenAIResponsesSection", () => {
     }));
     expect((screen.getByLabelText("openaiResponses.apiKey") as HTMLInputElement).value).toBe("");
     expect(screen.getByRole("button", { name: /resp_fixture/ })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /sk-test-synthetic/ })).toBeNull();
     expect(await screen.findByText("openaiResponses.inputItems (2)")).toBeTruthy();
     expect(screen.getByText("developer message")).toBeTruthy();
     expect(screen.getByText("Tool call: lookup")).toBeTruthy();

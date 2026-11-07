@@ -31,7 +31,7 @@ describe("serverSlice", () => {
   });
 
   it("loads read-only mode from WebUI server config", async () => {
-    vi.mocked(api).mockResolvedValue({ readOnly: true });
+    vi.mocked(api).mockResolvedValue({ readOnly: true, openaiResponsesAvailable: true });
     const useStore = createTestStore();
 
     await useStore.getState().loadServerConfig();
@@ -39,6 +39,16 @@ describe("serverSlice", () => {
     expect(api).toHaveBeenCalledWith("get_server_config");
     expect(useStore.getState().isServerReadOnly).toBe(true);
     expect(useStore.getState().isServerConfigLoaded).toBe(true);
+    expect(useStore.getState().isOpenAIResponsesAvailable).toBe(true);
+  });
+
+  it("hides the OpenAI action when the server does not allow it", async () => {
+    vi.mocked(api).mockResolvedValue({ readOnly: false, openaiResponsesAvailable: false });
+    const useStore = createTestStore();
+
+    await useStore.getState().loadServerConfig();
+
+    expect(useStore.getState().isOpenAIResponsesAvailable).toBe(false);
   });
 
   it("defaults to writable in Tauri desktop mode", async () => {
@@ -50,5 +60,6 @@ describe("serverSlice", () => {
     expect(api).not.toHaveBeenCalled();
     expect(useStore.getState().isServerReadOnly).toBe(false);
     expect(useStore.getState().isServerConfigLoaded).toBe(true);
+    expect(useStore.getState().isOpenAIResponsesAvailable).toBe(true);
   });
 });

@@ -58,11 +58,12 @@ describe("OpenAI Responses mapping", () => {
   });
 });
 
-describe("OpenAI Responses WebUI security gate", () => {
-  it("requires both loopback hosts and WebUI authentication", () => {
-    expect(canOpenOpenAIResponsesInWebUI("localhost", "http://127.0.0.1:3727/api", true)).toBe(true);
-    expect(canOpenOpenAIResponsesInWebUI("example.com", "http://127.0.0.1:3727/api", true)).toBe(false);
-    expect(canOpenOpenAIResponsesInWebUI("localhost", "https://api.example.com", true)).toBe(false);
-    expect(canOpenOpenAIResponsesInWebUI("127.0.0.1", "http://localhost:3727", false)).toBe(false);
+
+
+describe("OpenAI Responses WebUI safety gate", () => {
+  it("allows only loopback page and API hosts", () => {
+    expect(canOpenOpenAIResponsesInWebUI("localhost", "http://127.0.0.1:3727/api")).toBe(true);
+    expect(canOpenOpenAIResponsesInWebUI("example.com", "http://127.0.0.1:3727/api")).toBe(false);
+    expect(canOpenOpenAIResponsesInWebUI("localhost", "https://api.example.com")).toBe(false);
   });
 });

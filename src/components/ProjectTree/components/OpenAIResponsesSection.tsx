@@ -14,21 +14,12 @@ import {
   openAIItemMatchesQuery,
   type OpenAIResponseBundle,
 } from "@/services/openaiResponses";
-import { getApiBase, getAuthToken, getCsrfToken, isTauri } from "@/utils/platform";
+import { useAppStore } from "@/store/useAppStore";
+import { getApiBase, isTauri } from "@/utils/platform";
 
 interface OpenedConversation {
   bundle: OpenAIResponseBundle;
   requestedId: string;
-}
-
-function isAvailableInThisContext(): boolean {
-  if (isTauri()) return true;
-  if (typeof window === "undefined") return false;
-  return canOpenOpenAIResponsesInWebUI(
-    window.location.hostname,
-    getApiBase(),
-    Boolean(getAuthToken() || getCsrfToken()),
-  );
 }
 
 function textField(value: unknown, key: string): string | undefined {
@@ -39,6 +30,11 @@ function textField(value: unknown, key: string): string | undefined {
 
 export function OpenAIResponsesSection() {
   const { t } = useTranslation("session");
+  const serverAllowsOpenAIResponses = useAppStore((state) => state.isOpenAIResponsesAvailable);
+  const localRequestOnly = isTauri() || (
+    typeof window !== "undefined" &&
+    canOpenOpenAIResponsesInWebUI(window.location.hostname, getApiBase())
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [responseId, setResponseId] = useState("");
   const [apiKey, setApiKey] = useState("");
@@ -62,7 +58,7 @@ export function OpenAIResponsesSection() {
     [outputItems, search],
   );
 
-  if (!isAvailableInThisContext()) return null;
+  if (!serverAllowsOpenAIResponses || !localRequestOnly) return null;
 
   const openNew = () => {
     setActive(null);
