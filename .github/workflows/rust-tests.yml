@@ -237,6 +237,55 @@ jobs:
         working-directory: src-tauri
         run: cargo nextest run --profile ci --retries 2 --features webui-server
 
+  macos-build:
+    name: macOS Apple Silicon DMG
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js (.nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install Rust stable for Apple Silicon
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin
+
+      - name: Install just
+        run: brew install just
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+          cache-on-failure: true
+
+      - name: Verify Apple Silicon runner
+        run: test "$(uname -m)" = "arm64"
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      # This is an unsigned test build. Disable updater artifacts so the job
+      # never needs the release-only TAURI_SIGNING_PRIVATE_KEY secret.
+      - name: Build Apple Silicon DMG
+        run: pnpm exec tauri build --target aarch64-apple-darwin --config '{"bundle":{"createUpdaterArtifacts":false}}'
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-apple-silicon-dmg
+          path: src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg
+          if-no-files-found: error
+          retention-days: 7
+
   # Code coverage - main branch only
   coverage:
     name: Code Coverage
