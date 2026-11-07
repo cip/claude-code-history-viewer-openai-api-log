@@ -79,7 +79,7 @@ fn with_response_includes(request: RequestBuilder) -> RequestBuilder {
 }
 
 /// Retrieve one stored Response and its input items. The key is sent only to the
-/// fixed OpenAI API origin, through an Authorization header, and is never logged
+/// fixed `OpenAI` API origin, through an Authorization header, and is never logged
 /// or included in a returned error.
 pub async fn retrieve_openai_response(
     response_id: String,
@@ -223,7 +223,7 @@ mod tests {
             "last_id": "item_2"
         });
         let page: InputItemsPage = serde_json::from_value(fixture.clone()).unwrap();
-        assert_eq!(page.data, fixture["data"].as_array().unwrap().to_vec());
+        assert_eq!(page.data, fixture["data"].as_array().unwrap().clone());
         assert!(!page.has_more);
         assert_eq!(page.last_id.as_deref(), Some("item_2"));
     }
