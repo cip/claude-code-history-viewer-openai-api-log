@@ -261,7 +261,7 @@ export function OpenAIResponsesSection() {
                 </p>
               )}
               {!active.bundle.inputItemsComplete && (
-                <p role="status" className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-body">
+                <p role="status" className="rounded-md border border-warning bg-warning/10 px-3 py-2 text-body">
                   {t("openaiResponses.partialItemsNote")}
                 </p>
               )}
