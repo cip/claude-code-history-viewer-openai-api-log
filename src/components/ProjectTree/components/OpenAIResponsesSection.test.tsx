@@ -60,12 +60,14 @@ describe("OpenAIResponsesSection", () => {
       apiKey: "sk-test-synthetic",
     }));
     expect((screen.getByLabelText("openaiResponses.apiKey") as HTMLInputElement).value).toBe("");
-    expect(screen.getByRole("button", { name: /resp_fixture/ })).toBeTruthy();
     expect(screen.queryByRole("button", { name: /sk-test-synthetic/ })).toBeNull();
     expect(await screen.findByText("openaiResponses.inputItems (2)")).toBeTruthy();
     expect(screen.getByText("developer message")).toBeTruthy();
     expect(screen.getByText("Tool call: lookup")).toBeTruthy();
     expect(screen.queryByText("138")).toBeNull();
     expect(screen.getByText("52")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(await screen.findByRole("button", { name: /resp_fixture/ })).toBeTruthy();
   });
 });
