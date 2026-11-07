@@ -92,6 +92,22 @@ export function getOpenAIResponseErrorKey(error: unknown): OpenAIResponseErrorKe
     ? OPENAI_RESPONSE_ERROR_KEYS[message as keyof typeof OPENAI_RESPONSE_ERROR_KEYS]
     : "openaiResponses.error";
 }
+const SAFE_OPENAI_DIAGNOSTIC_CODES = new Set([
+  "openai_invalid_json",
+  "openai_input_items_error",
+  "openai_pagination_error",
+  "openai_request_failed",
+]);
+
+/** Return only allowlisted backend codes; never surface arbitrary API or IPC error text. */
+export function getOpenAIResponseErrorDiagnostic(error: unknown): string | undefined {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return SAFE_OPENAI_DIAGNOSTIC_CODES.has(message) ||
+    /^openai_(?:retrieve|input_items)_http_[1-5]\d{2}$/.test(message)
+    ? message
+    : undefined;
+}
+
 function isLoopbackHost(hostname: string): boolean {
   const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (normalized === "localhost" || normalized === "::1") return true;

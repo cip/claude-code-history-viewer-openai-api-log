@@ -46,7 +46,7 @@ fn validate_response_id(value: &str) -> Result<String, String> {
     Ok(response_id.to_string())
 }
 
-fn error_for_status(status: StatusCode) -> String {
+fn error_for_status(status: StatusCode, stage: &'static str) -> String {
     if status == StatusCode::UNAUTHORIZED || status == StatusCode::FORBIDDEN {
         "openai_auth_failed".to_string()
     } else if status == StatusCode::NOT_FOUND {
@@ -56,22 +56,23 @@ fn error_for_status(status: StatusCode) -> String {
     } else if status.is_server_error() {
         "openai_service_unavailable".to_string()
     } else {
-        "openai_request_failed".to_string()
+        // Expose only the endpoint stage and HTTP status, never OpenAI's error body.
+        format!("openai_{stage}_http_{}", status.as_u16())
     }
 }
 
-async fn send_openai_json(request: RequestBuilder) -> Result<Value, String> {
+async fn send_openai_json(request: RequestBuilder, stage: &'static str) -> Result<Value, String> {
     let response = request
         .send()
         .await
         .map_err(|_| "openai_network_error".to_string())?;
     if !response.status().is_success() {
-        return Err(error_for_status(response.status()));
+        return Err(error_for_status(response.status(), stage));
     }
     response
         .json::<Value>()
         .await
-        .map_err(|_| "openai_invalid_json".to_string())
+        .map_err(|_| format!("openai_{stage}_invalid_json"))
 }
 
 fn with_response_includes(request: RequestBuilder) -> RequestBuilder {
@@ -98,9 +99,10 @@ pub async fn retrieve_openai_response(
         .map_err(|_| "openai_network_error".to_string())?;
 
     let response_url = format!("{OPENAI_API_BASE}/responses/{response_id}");
-    let response = send_openai_json(with_response_includes(
-        client.get(response_url).bearer_auth(api_key),
-    ))
+    let response = send_openai_json(
+        with_response_includes(client.get(response_url).bearer_auth(api_key)),
+        "retrieve",
+    )
     .await?;
     if !response.is_object() {
         return Err("openai_invalid_json".to_string());
@@ -121,7 +123,7 @@ pub async fn retrieve_openai_response(
             request = request.query(&[("after", cursor)]);
         }
 
-        let page_value = send_openai_json(request).await?;
+        let page_value = send_openai_json(request, "input_items").await?;
         let page: InputItemsPage = serde_json::from_value(page_value)
             .map_err(|_| "openai_input_items_error".to_string())?;
         let remaining = MAX_INPUT_ITEMS.saturating_sub(input_items.len());
@@ -182,24 +184,32 @@ mod tests {
     #[test]
     fn maps_api_statuses_without_echoing_response_bodies() {
         assert_eq!(
-            error_for_status(StatusCode::UNAUTHORIZED),
+            error_for_status(StatusCode::UNAUTHORIZED, "retrieve"),
             "openai_auth_failed"
         );
         assert_eq!(
-            error_for_status(StatusCode::FORBIDDEN),
+            error_for_status(StatusCode::FORBIDDEN, "retrieve"),
             "openai_auth_failed"
         );
         assert_eq!(
-            error_for_status(StatusCode::NOT_FOUND),
+            error_for_status(StatusCode::NOT_FOUND, "retrieve"),
             "openai_response_unavailable"
         );
         assert_eq!(
-            error_for_status(StatusCode::TOO_MANY_REQUESTS),
+            error_for_status(StatusCode::TOO_MANY_REQUESTS, "retrieve"),
             "openai_rate_limited"
         );
         assert_eq!(
-            error_for_status(StatusCode::INTERNAL_SERVER_ERROR),
+            error_for_status(StatusCode::INTERNAL_SERVER_ERROR, "retrieve"),
             "openai_service_unavailable"
+        );
+        assert_eq!(
+            error_for_status(StatusCode::BAD_REQUEST, "retrieve"),
+            "openai_retrieve_http_400"
+        );
+        assert_eq!(
+            error_for_status(StatusCode::BAD_REQUEST, "input_items"),
+            "openai_input_items_http_400"
         );
     }
 

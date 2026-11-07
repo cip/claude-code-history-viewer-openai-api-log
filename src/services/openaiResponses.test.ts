@@ -5,6 +5,7 @@ import {
   getOpenAIItemLabel,
   getOpenAIOutputItems,
   getOpenAIResponseErrorKey,
+  getOpenAIResponseErrorDiagnostic,
   getOpenAIResponseUsage,
   openAIItemMatchesQuery,
 } from "./openaiResponses";
@@ -55,6 +56,13 @@ describe("OpenAI Responses mapping", () => {
     expect(getOpenAIResponseErrorKey(new Error("openai_auth_failed"))).toBe("openaiResponses.authFailed");
     expect(getOpenAIResponseErrorKey(new Error("openai_response_unavailable"))).toBe("openaiResponses.notFound");
     expect(getOpenAIResponseErrorKey(new Error("other"))).toBe("openaiResponses.error");
+  });
+
+  it("exposes only safe diagnostic codes and HTTP status values", () => {
+    expect(getOpenAIResponseErrorDiagnostic(new Error("openai_input_items_http_400"))).toBe("openai_input_items_http_400");
+    expect(getOpenAIResponseErrorDiagnostic(new Error("openai_input_items_error"))).toBe("openai_input_items_error");
+    expect(getOpenAIResponseErrorDiagnostic(new Error("sk-private-secret"))).toBeUndefined();
+    expect(getOpenAIResponseErrorDiagnostic(new Error("arbitrary API body"))).toBeUndefined();
   });
 });
 

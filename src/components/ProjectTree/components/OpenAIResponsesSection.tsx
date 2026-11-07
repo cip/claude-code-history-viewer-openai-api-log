@@ -10,6 +10,7 @@ import {
   getOpenAIItemLabel,
   getOpenAIOutputItems,
   getOpenAIResponseErrorKey,
+  getOpenAIResponseErrorDiagnostic,
   getOpenAIResponseUsage,
   openAIItemMatchesQuery,
   type OpenAIResponseBundle,
@@ -40,6 +41,7 @@ export function OpenAIResponsesSection() {
   const [apiKey, setApiKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [errorDiagnostic, setErrorDiagnostic] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [expandAll, setExpandAll] = useState(false);
   const [opened, setOpened] = useState<OpenedConversation[]>([]);
@@ -66,6 +68,7 @@ export function OpenAIResponsesSection() {
     setApiKey("");
     setSearch("");
     setErrorKey(null);
+    setErrorDiagnostic(null);
     setDialogOpen(true);
   };
 
@@ -74,6 +77,7 @@ export function OpenAIResponsesSection() {
     setResponseId(conversation.requestedId);
     setSearch("");
     setErrorKey(null);
+    setErrorDiagnostic(null);
     setExpandAll(false);
     setDialogOpen(true);
   };
@@ -82,6 +86,7 @@ export function OpenAIResponsesSection() {
     event.preventDefault();
     setLoading(true);
     setErrorKey(null);
+    setErrorDiagnostic(null);
     const requestedId = responseId.trim();
     const key = apiKey;
     try {
@@ -99,6 +104,7 @@ export function OpenAIResponsesSection() {
       setExpandAll(false);
     } catch (error) {
       setErrorKey(getOpenAIResponseErrorKey(error));
+      setErrorDiagnostic(getOpenAIResponseErrorDiagnostic(error) ?? null);
     } finally {
       setApiKey("");
       setLoading(false);
@@ -223,7 +229,12 @@ export function OpenAIResponsesSection() {
             </Button>
           </form>
 
-          {errorKey && <p role="alert" className="text-body text-destructive">{t(errorKey)}</p>}
+          {errorKey && (
+            <p role="alert" className="text-body text-destructive">
+              {t(errorKey)}
+              {errorDiagnostic && <code className="ml-2 text-caption text-muted-foreground">({errorDiagnostic})</code>}
+            </p>
+          )}
 
           {active && (
             <div className="space-y-4 border-t border-border pt-4">

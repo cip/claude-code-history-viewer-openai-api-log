@@ -70,4 +70,20 @@ describe("OpenAIResponsesSection", () => {
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(await screen.findByRole("button", { name: /resp_fixture/ })).toBeTruthy();
   });
+
+  it("shows a sanitized diagnostic code for an unclassified API failure", async () => {
+    vi.mocked(api).mockRejectedValue(new Error("openai_input_items_http_400"));
+    render(<OpenAIResponsesSection />);
+
+    fireEvent.click(screen.getByRole("button", { name: "openaiResponses.action" }));
+    fireEvent.change(screen.getByLabelText("openaiResponses.responseId"), { target: { value: "resp_fixture" } });
+    fireEvent.change(screen.getByLabelText("openaiResponses.apiKey"), { target: { value: "sk-test-synthetic" } });
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "openaiResponses.open" }));
+    });
+
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(screen.getByText("(openai_input_items_http_400)")).toBeTruthy();
+    expect(screen.queryByText(/sk-test-synthetic/)).toBeNull();
+  });
 });
