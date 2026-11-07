@@ -36,6 +36,7 @@ pub mod test_utils;
 use crate::commands::antigravity::{
     get_antigravity_project_summary, get_antigravity_session, load_antigravity_state,
 };
+use crate::commands::openai_response::load_openai_response;
 use crate::commands::{
     archive::{
         create_archive, delete_archive, export_session, get_archive_base_path,
@@ -222,6 +223,7 @@ fn run_tauri() {
             scan_projects,
             get_git_log,
             load_project_sessions,
+            load_openai_response,
             load_project_sessions_page,
             load_session_messages,
             load_session_messages_paginated,

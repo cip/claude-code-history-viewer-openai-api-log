@@ -149,6 +149,7 @@ export const STATE_SCOPE: Readonly<Record<string, StateScope>> = {
   isMetadataLoading: "app",
   metadataError: "app",
   isServerConfigLoaded: "app",
+  isOpenAIResponsesAvailable: "app",
   isServerReadOnly: "app",
   watcherEnabled: "app",
   lastUpdateTime: "app",

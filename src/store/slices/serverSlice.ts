@@ -5,11 +5,13 @@ import type { FullAppStore } from "./types";
 
 interface ServerConfig {
   readOnly?: boolean;
+  openaiResponsesAvailable?: boolean;
 }
 
 export interface ServerSliceState {
   isServerReadOnly: boolean;
   isServerConfigLoaded: boolean;
+  isOpenAIResponsesAvailable: boolean;
 }
 
 export interface ServerSliceActions {
@@ -21,6 +23,7 @@ export type ServerSlice = ServerSliceState & ServerSliceActions;
 const initialServerState: ServerSliceState = {
   isServerReadOnly: false,
   isServerConfigLoaded: false,
+  isOpenAIResponsesAvailable: false,
 };
 
 export const createServerSlice: StateCreator<
@@ -33,7 +36,11 @@ export const createServerSlice: StateCreator<
 
   loadServerConfig: async () => {
     if (isTauri()) {
-      set({ isServerReadOnly: false, isServerConfigLoaded: true });
+      set({
+        isServerReadOnly: false,
+        isServerConfigLoaded: true,
+        isOpenAIResponsesAvailable: true,
+      });
       return;
     }
 
@@ -42,10 +49,15 @@ export const createServerSlice: StateCreator<
       set({
         isServerReadOnly: config.readOnly === true,
         isServerConfigLoaded: true,
+        isOpenAIResponsesAvailable: config.openaiResponsesAvailable === true,
       });
     } catch (error) {
       console.warn("Failed to load server config:", error);
-      set({ isServerReadOnly: false, isServerConfigLoaded: true });
+      set({
+        isServerReadOnly: false,
+        isServerConfigLoaded: true,
+        isOpenAIResponsesAvailable: false,
+      });
     }
   },
 });

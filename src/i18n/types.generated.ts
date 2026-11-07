@@ -6,7 +6,7 @@
  *
  * 생성 명령: pnpm run generate:i18n-types
  * 생성 시간: 2026-11-01T04:18:54.294Z
- * 총 키 개수: 2347
+ * 총 키 개수: 2379
  * Namespace 수: 13
  */
 
@@ -569,10 +569,42 @@ export type AnalyticsKeys =
   | 'analytics.weeklyActivity';
 
 /**
- * session namespace의 번역 키 (292개)
+ * session namespace의 번역 키 (324개)
  * 파일: locales/{lang}/session.json
  */
 export type SessionKeys =
+  | 'openaiResponses.action'
+  | 'openaiResponses.apiKey'
+  | 'openaiResponses.apiUnavailable'
+  | 'openaiResponses.authFailed'
+  | 'openaiResponses.cacheWriteTokens'
+  | 'openaiResponses.cachedTokens'
+  | 'openaiResponses.clear'
+  | 'openaiResponses.collapseAll'
+  | 'openaiResponses.description'
+  | 'openaiResponses.error'
+  | 'openaiResponses.expandAll'
+  | 'openaiResponses.inputItems'
+  | 'openaiResponses.inputTokens'
+  | 'openaiResponses.invalidApiKey'
+  | 'openaiResponses.invalidId'
+  | 'openaiResponses.loading'
+  | 'openaiResponses.networkError'
+  | 'openaiResponses.noItems'
+  | 'openaiResponses.notFound'
+  | 'openaiResponses.open'
+  | 'openaiResponses.opened'
+  | 'openaiResponses.outputItems'
+  | 'openaiResponses.outputTokens'
+  | 'openaiResponses.partialItemsNote'
+  | 'openaiResponses.previousResponseNote'
+  | 'openaiResponses.rateLimited'
+  | 'openaiResponses.reasoningTokens'
+  | 'openaiResponses.responseId'
+  | 'openaiResponses.responseInfo'
+  | 'openaiResponses.search'
+  | 'openaiResponses.title'
+  | 'openaiResponses.totalTokens'
   | 'project.a11y.collapseGroup'
   | 'project.a11y.collapsedState'
   | 'project.a11y.expandGroup'
@@ -3573,6 +3605,38 @@ export type TranslationKey =
   | 'navigator.userOnly'
   | 'navigator.viewMode.outline'
   | 'navigator.viewMode.toggle'
+  | 'openaiResponses.action'
+  | 'openaiResponses.apiKey'
+  | 'openaiResponses.apiUnavailable'
+  | 'openaiResponses.authFailed'
+  | 'openaiResponses.cacheWriteTokens'
+  | 'openaiResponses.cachedTokens'
+  | 'openaiResponses.clear'
+  | 'openaiResponses.collapseAll'
+  | 'openaiResponses.description'
+  | 'openaiResponses.error'
+  | 'openaiResponses.expandAll'
+  | 'openaiResponses.inputItems'
+  | 'openaiResponses.inputTokens'
+  | 'openaiResponses.invalidApiKey'
+  | 'openaiResponses.invalidId'
+  | 'openaiResponses.loading'
+  | 'openaiResponses.networkError'
+  | 'openaiResponses.noItems'
+  | 'openaiResponses.notFound'
+  | 'openaiResponses.open'
+  | 'openaiResponses.opened'
+  | 'openaiResponses.outputItems'
+  | 'openaiResponses.outputTokens'
+  | 'openaiResponses.partialItemsNote'
+  | 'openaiResponses.previousResponseNote'
+  | 'openaiResponses.rateLimited'
+  | 'openaiResponses.reasoningTokens'
+  | 'openaiResponses.responseId'
+  | 'openaiResponses.responseInfo'
+  | 'openaiResponses.search'
+  | 'openaiResponses.title'
+  | 'openaiResponses.totalTokens'
   | 'outputBlock.copy'
   | 'outputBlock.empty'
   | 'outputBlock.lineCount'

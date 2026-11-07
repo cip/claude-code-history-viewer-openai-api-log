@@ -84,6 +84,7 @@ const READ_ONLY_ALLOWED_API_PATHS: &[&str] = &[
     "/list_archives",
     "/load_archive_session_messages",
     "/load_mcp_presets",
+    "/load_openai_response",
     "/load_presets",
     "/load_project_sessions",
     "/load_project_sessions_page",
@@ -159,6 +160,10 @@ enum SpaIndex {
 }
 
 /// Build the complete Axum router with all API routes and SPA fallback.
+fn openai_response_route_enabled(state: &AppState) -> bool {
+    state.loopback_bind && state.auth.is_enabled()
+}
+
 pub fn build_router(
     state: Arc<AppState>,
     host: &str,
@@ -337,7 +342,15 @@ pub fn build_router(
         )
         .route("/get_archive_disk_usage", post(h::get_archive_disk_usage))
         .route("/get_expiring_sessions", post(h::get_expiring_sessions))
-        .route("/export_session", post(h::export_session))
+        .route("/export_session", post(h::export_session));
+
+    // A WebUI client must not send an OpenAI key to a remotely reachable server.
+    let protected_api = if openai_response_route_enabled(&state) {
+        protected_api.route("/load_openai_response", post(h::load_openai_response))
+    } else {
+        protected_api
+    };
+    let protected_api = protected_api
         // Auth middleware — checks Bearer header or ?token= query param
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
@@ -2170,6 +2183,7 @@ mod tests {
             "/api/search_messages",
             "/api/get_all_settings",
             "/api/export_session",
+            "/api/load_openai_response",
         ] {
             assert!(
                 is_read_only_allowed_path(path),
@@ -2239,6 +2253,19 @@ mod tests {
                 "classified path {path} is not a registered POST route (stale entry)"
             );
         }
+    }
+
+    #[test]
+    fn openai_response_route_requires_authenticated_loopback() {
+        assert!(openai_response_route_enabled(&state_with(
+            true,
+            Some("token")
+        )));
+        assert!(!openai_response_route_enabled(&state_with(
+            false,
+            Some("token")
+        )));
+        assert!(!openai_response_route_enabled(&state_with(true, None)));
     }
 
     #[test]
