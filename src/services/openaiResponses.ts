@@ -88,7 +88,9 @@ type OpenAIResponseErrorKey = (typeof OPENAI_RESPONSE_ERROR_KEYS)[keyof typeof O
 
 export function getOpenAIResponseErrorKey(error: unknown): OpenAIResponseErrorKey {
   const message = error instanceof Error ? error.message : String(error ?? "");
-  return OPENAI_RESPONSE_ERROR_KEYS[message] ?? "openaiResponses.error";
+  return Object.prototype.hasOwnProperty.call(OPENAI_RESPONSE_ERROR_KEYS, message)
+    ? OPENAI_RESPONSE_ERROR_KEYS[message as keyof typeof OPENAI_RESPONSE_ERROR_KEYS]
+    : "openaiResponses.error";
 }
 function isLoopbackHost(hostname: string): boolean {
   const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");

@@ -249,7 +249,7 @@ export function OpenAIResponsesSection() {
                   {usageRows.map(([label, value]) => (
                     <div key={label} className="rounded-md bg-muted/50 px-3 py-2">
                       <div className="text-xs text-muted-foreground">{label}</div>
-                      <div className="font-mono text-sm">{value.toLocaleString()}</div>
+                      <div className="font-mono text-sm">{value === undefined ? "—" : value.toLocaleString()}</div>
                     </div>
                   ))}
                 </div>

@@ -264,6 +264,7 @@ export interface AppStoreState {
   // WebUI server state
   isServerReadOnly: boolean;
   isServerConfigLoaded: boolean;
+  isOpenAIResponsesAvailable: boolean;
 
   // Session selection (multi-select mode) state
   isSessionSelectionMode: boolean;
