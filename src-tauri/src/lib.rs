@@ -33,10 +33,10 @@ const PRINT_PASSWORD_HASH_FLAG: &str = "--print-password-hash";
 #[cfg(test)]
 pub mod test_utils;
 
-use crate::commands::openai_response::load_openai_response;
 use crate::commands::antigravity::{
     get_antigravity_project_summary, get_antigravity_session, load_antigravity_state,
 };
+use crate::commands::openai_response::load_openai_response;
 use crate::commands::{
     archive::{
         create_archive, delete_archive, export_session, get_archive_base_path,

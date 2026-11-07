@@ -98,9 +98,9 @@ pub async fn retrieve_openai_response(
         .map_err(|_| "openai_network_error".to_string())?;
 
     let response_url = format!("{OPENAI_API_BASE}/responses/{response_id}");
-    let response = send_openai_json(
-        with_response_includes(client.get(response_url).bearer_auth(api_key)),
-    )
+    let response = send_openai_json(with_response_includes(
+        client.get(response_url).bearer_auth(api_key),
+    ))
     .await?;
     if !response.is_object() {
         return Err("openai_invalid_json".to_string());
@@ -140,7 +140,9 @@ pub async fn retrieve_openai_response(
             break;
         }
 
-        let next_cursor = page.last_id.ok_or_else(|| "openai_pagination_error".to_string())?;
+        let next_cursor = page
+            .last_id
+            .ok_or_else(|| "openai_pagination_error".to_string())?;
         if after.as_deref() == Some(next_cursor.as_str()) {
             return Err("openai_pagination_error".to_string());
         }
@@ -168,7 +170,10 @@ mod tests {
 
     #[test]
     fn validates_only_response_ids_without_path_characters() {
-        assert_eq!(validate_response_id("resp_test_123-abc").unwrap(), "resp_test_123-abc");
+        assert_eq!(
+            validate_response_id("resp_test_123-abc").unwrap(),
+            "resp_test_123-abc"
+        );
         for invalid in ["", "resp_", "resp_test/other", "resp_test?x=1", "other_123"] {
             assert!(validate_response_id(invalid).is_err(), "{invalid}");
         }
@@ -176,10 +181,22 @@ mod tests {
 
     #[test]
     fn maps_api_statuses_without_echoing_response_bodies() {
-        assert_eq!(error_for_status(StatusCode::UNAUTHORIZED), "openai_auth_failed");
-        assert_eq!(error_for_status(StatusCode::FORBIDDEN), "openai_auth_failed");
-        assert_eq!(error_for_status(StatusCode::NOT_FOUND), "openai_response_unavailable");
-        assert_eq!(error_for_status(StatusCode::TOO_MANY_REQUESTS), "openai_rate_limited");
+        assert_eq!(
+            error_for_status(StatusCode::UNAUTHORIZED),
+            "openai_auth_failed"
+        );
+        assert_eq!(
+            error_for_status(StatusCode::FORBIDDEN),
+            "openai_auth_failed"
+        );
+        assert_eq!(
+            error_for_status(StatusCode::NOT_FOUND),
+            "openai_response_unavailable"
+        );
+        assert_eq!(
+            error_for_status(StatusCode::TOO_MANY_REQUESTS),
+            "openai_rate_limited"
+        );
         assert_eq!(
             error_for_status(StatusCode::INTERNAL_SERVER_ERROR),
             "openai_service_unavailable"

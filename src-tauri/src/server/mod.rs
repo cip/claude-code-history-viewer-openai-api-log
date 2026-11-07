@@ -2257,8 +2257,14 @@ mod tests {
 
     #[test]
     fn openai_response_route_requires_authenticated_loopback() {
-        assert!(openai_response_route_enabled(&state_with(true, Some("token"))));
-        assert!(!openai_response_route_enabled(&state_with(false, Some("token"))));
+        assert!(openai_response_route_enabled(&state_with(
+            true,
+            Some("token")
+        )));
+        assert!(!openai_response_route_enabled(&state_with(
+            false,
+            Some("token")
+        )));
         assert!(!openai_response_route_enabled(&state_with(true, None)));
     }
 
