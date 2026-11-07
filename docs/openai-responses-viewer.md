@@ -2,6 +2,8 @@
 
 The Explorer's “Open conversation…” action retrieves one stored OpenAI Response. It uses the official [Retrieve Response](https://developers.openai.com/api/reference/resources/responses/methods/retrieve) endpoint and paginates [List Input Items](https://developers.openai.com/api/reference/resources/responses/subresources/input_items/methods/list) in ascending order, requesting the optional payload fields documented by the API. The UI displays API-returned input and output items as raw JSON; tool calls/results, structured JSON, roles, metadata, and usage fields are not converted into invented conversation text.
 
+These public endpoints retrieve a stored Response object; they do not fetch independent rows from a dashboard log API. OpenAI documents that Responses are stored for at least 30 days by default and can be retrieved/viewed in dashboard logs, while `store:false` disables that behavior. As a result, a Roadtrip-Tunes call created with `store:false` cannot be loaded through this PoC, even if you have noted its ID elsewhere. This PoC does not change the request's storage setting.
+
 ## Try it with a real response
 
 1. In the OpenAI Platform dashboard, open the API Logs page and copy a Response ID beginning with resp_.
