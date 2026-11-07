@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { ChevronDown, ChevronUp, MessageSquarePlus, Search, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, MessageSquarePlus, Search, Trash } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -107,9 +107,9 @@ export function OpenAIResponsesSection() {
 
   const renderItems = (items: unknown[], section: string) => (
     <section className="space-y-2">
-      <h3 className="text-sm font-semibold">{section} ({items.length})</h3>
+      <h3 className="text-body font-semibold">{section} ({items.length})</h3>
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">{t("openaiResponses.noItems")}</p>
+        <p className="text-body text-muted-foreground">{t("openaiResponses.noItems")}</p>
       ) : (
         <div className="space-y-2">
           {items.map((item, index) => (
@@ -118,10 +118,10 @@ export function OpenAIResponsesSection() {
               open={expandAll || undefined}
               className="rounded-md border border-border bg-background/60 px-3 py-2"
             >
-              <summary className="cursor-pointer text-sm font-medium">
+              <summary className="cursor-pointer text-body font-medium">
                 {getOpenAIItemLabel(item, index)}
               </summary>
-              <pre className="mt-2 max-h-[55vh] overflow-auto whitespace-pre-wrap break-words rounded bg-muted/40 p-3 text-xs">
+              <pre className="mt-2 max-h-[55vh] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted/40 p-3 text-caption">
                 {formatOpenAIJson(item)}
               </pre>
             </details>
@@ -158,7 +158,7 @@ export function OpenAIResponsesSection() {
       {opened.length > 0 && (
         <div className="mt-2 space-y-1">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-muted-foreground">{t("openaiResponses.opened")}</p>
+            <p className="text-caption font-semibold text-muted-foreground">{t("openaiResponses.opened")}</p>
             <Button
               variant="ghost"
               size="icon-sm"
@@ -166,7 +166,7 @@ export function OpenAIResponsesSection() {
               aria-label={t("openaiResponses.clear")}
               title={t("openaiResponses.clear")}
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash className="h-3.5 w-3.5" />
             </Button>
           </div>
           {opened.map((conversation) => (
@@ -174,7 +174,7 @@ export function OpenAIResponsesSection() {
               type="button"
               key={conversation.requestedId}
               onClick={() => openStored(conversation)}
-              className="block w-full truncate rounded px-2 py-1 text-left text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+              className="block w-full truncate rounded-md px-2 py-1 text-left text-caption text-muted-foreground hover:bg-muted hover:text-foreground"
               title={conversation.requestedId}
             >
               {conversation.requestedId}
@@ -194,20 +194,20 @@ export function OpenAIResponsesSection() {
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-            <div className="grid gap-1.5">
-              <label htmlFor="openai-response-id" className="text-sm font-medium">{t("openaiResponses.responseId")}</label>
+            <div className="grid gap-2">
+              <label htmlFor="openai-response-id" className="text-body font-medium">{t("openaiResponses.responseId")}</label>
               <input
                 id="openai-response-id"
                 value={responseId}
                 onChange={(event) => setResponseId(event.target.value)}
                 autoComplete="off"
                 required
-                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                className="h-9 rounded-md border border-input bg-background px-3 text-body"
                 placeholder="resp_…"
               />
             </div>
-            <div className="grid gap-1.5">
-              <label htmlFor="openai-api-key" className="text-sm font-medium">{t("openaiResponses.apiKey")}</label>
+            <div className="grid gap-2">
+              <label htmlFor="openai-api-key" className="text-body font-medium">{t("openaiResponses.apiKey")}</label>
               <input
                 id="openai-api-key"
                 type="password"
@@ -215,7 +215,7 @@ export function OpenAIResponsesSection() {
                 onChange={(event) => setApiKey(event.target.value)}
                 autoComplete="new-password"
                 required
-                className="h-9 rounded-md border border-input bg-background px-3 text-sm"
+                className="h-9 rounded-md border border-input bg-background px-3 text-body"
               />
             </div>
             <Button type="submit" disabled={loading || !responseId.trim() || !apiKey} className="sm:min-w-32">
@@ -223,14 +223,14 @@ export function OpenAIResponsesSection() {
             </Button>
           </form>
 
-          {errorKey && <p role="alert" className="text-sm text-destructive">{t(errorKey)}</p>}
+          {errorKey && <p role="alert" className="text-body text-destructive">{t(errorKey)}</p>}
 
           {active && (
             <div className="space-y-4 border-t border-border pt-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <h2 className="break-all text-base font-semibold">{responseIdValue}</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <h2 className="break-all text-title font-semibold">{responseIdValue}</h2>
+                  <p className="text-body text-muted-foreground">
                     {[model, status].filter(Boolean).join(" · ")}
                   </p>
                 </div>
@@ -248,20 +248,20 @@ export function OpenAIResponsesSection() {
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
                   {usageRows.map(([label, value]) => (
                     <div key={label} className="rounded-md bg-muted/50 px-3 py-2">
-                      <div className="text-xs text-muted-foreground">{label}</div>
-                      <div className="font-mono text-sm">{value === undefined ? "—" : value.toLocaleString()}</div>
+                      <div className="text-caption text-muted-foreground">{label}</div>
+                      <div className="font-code text-body">{value === undefined ? "—" : value}</div>
                     </div>
                   ))}
                 </div>
               )}
 
               {previousResponseId && (
-                <p className="rounded-md border border-border px-3 py-2 text-sm text-muted-foreground">
+                <p className="rounded-md border border-border px-3 py-2 text-body text-muted-foreground">
                   {t("openaiResponses.previousResponseNote")} ({previousResponseId})
                 </p>
               )}
               {!active.bundle.inputItemsComplete && (
-                <p role="status" className="rounded-md border border-amber-500/40 bg-amber-500/5 px-3 py-2 text-sm">
+                <p role="status" className="rounded-md border border-warning/40 bg-warning/10 px-3 py-2 text-body">
                   {t("openaiResponses.partialItemsNote")}
                 </p>
               )}
@@ -273,18 +273,18 @@ export function OpenAIResponsesSection() {
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                   placeholder={t("openaiResponses.search")}
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none"
+                  className="min-w-0 flex-1 bg-transparent text-body outline-none"
                 />
               </label>
 
-              <div className="grid gap-5 lg:grid-cols-2">
+              <div className="grid gap-4 lg:grid-cols-2">
                 {renderItems(filteredInputItems, t("openaiResponses.inputItems"))}
                 {renderItems(filteredOutputItems, t("openaiResponses.outputItems"))}
               </div>
 
               <details open={expandAll || undefined} className="rounded-md border border-border px-3 py-2">
-                <summary className="cursor-pointer text-sm font-medium">{t("openaiResponses.responseInfo")}</summary>
-                <pre className="mt-2 max-h-[55vh] overflow-auto whitespace-pre-wrap break-words rounded bg-muted/40 p-3 text-xs">
+                <summary className="cursor-pointer text-body font-medium">{t("openaiResponses.responseInfo")}</summary>
+                <pre className="mt-2 max-h-[55vh] overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted/40 p-3 text-caption">
                   {formatOpenAIJson(active.bundle.response)}
                 </pre>
               </details>
